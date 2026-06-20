@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "FacMod - Factorio Mod Downloader",
+  "version": "0.0.1",
+  "description": "One-click Factorio mod downloads, no account required.",
+  "permissions": [
+    "storage",
+    "downloads",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://mods.factorio.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mods.factorio.com/*"
+      ],
+      "js": [
+        "src/polyfill.js",
+        "src/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
