@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install dependencies
+        run: pip install Pillow
+
       - name: Generate icons
         run: python3 icons/generate.py
 
