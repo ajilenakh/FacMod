@@ -19,6 +19,7 @@ if (typeof browser === 'undefined') {
       runtime: {
         sendMessage: promisify(chrome.runtime.sendMessage.bind(chrome.runtime)),
         onMessage: chrome.runtime.onMessage,
+        onConnect: chrome.runtime.onConnect,
         id: chrome.runtime.id,
         getManifest: function () { return chrome.runtime.getManifest(); },
         getURL: function (path) { return chrome.runtime.getURL(path); }
@@ -39,14 +40,18 @@ if (typeof browser === 'undefined') {
   })(typeof window !== 'undefined' ? window : globalThis);
 }
 
+console.log('[FacMod] Worker started');
+
 var API_BASE = 'https://mods.factorio.com';
 var CDN_BASE = 'https://mods-storage.re146.dev';
 
 browser.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   switch (message.action) {
     case 'download':
-      handleDownload(message, sender)
-        .then(sendResponse)
+      handleDownload(message)
+        .then(function (result) {
+          sendResponse({ success: true, downloadUrl: result.downloadUrl, fileId: result.fileId, version: result.version, fileName: result.fileName, downloadId: result.downloadId });
+        })
         .catch(function (err) {
           sendResponse({ success: false, error: err.message || 'Unknown error' });
         });
@@ -54,7 +59,9 @@ browser.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     case 'getStatus':
       getStatus()
-        .then(sendResponse)
+        .then(function (result) {
+          sendResponse({ success: true, installed: result.installed, version: result.version, authenticated: result.authenticated });
+        })
         .catch(function (err) {
           sendResponse({ success: false, error: err.message });
         });
@@ -65,7 +72,7 @@ browser.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 });
 
-async function handleDownload(message, sender) {
+async function handleDownload(message) {
   var fileId = message.fileId;
   if (!fileId) {
     throw new Error('Missing fileId');

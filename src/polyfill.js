@@ -21,6 +21,8 @@
     runtime: {
       sendMessage: promisify(chrome.runtime.sendMessage.bind(chrome.runtime)),
       onMessage: chrome.runtime.onMessage,
+      onConnect: chrome.runtime.onConnect,
+      connect: function (info) { return chrome.runtime.connect(info); },
       id: chrome.runtime.id,
       getManifest: function () { return chrome.runtime.getManifest(); },
       getURL: function (path) { return chrome.runtime.getURL(path); }
