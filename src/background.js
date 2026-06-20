@@ -71,7 +71,16 @@ async function handleDownload(message, sender) {
     throw new Error('Missing fileId');
   }
 
-  var version = await getLatestVersion(fileId);
+  var version = message.version;
+  var fileName;
+
+  if (version) {
+    fileName = fileId + '_' + version + '.zip';
+  } else {
+    var release = await getLatestRelease(fileId);
+    version = release.version;
+    fileName = release.fileName || (fileId + '_' + release.version + '.zip');
+  }
   if (!version) {
     throw new Error('Could not determine latest version for ' + fileId);
   }
@@ -80,21 +89,23 @@ async function handleDownload(message, sender) {
 
   var downloadId = await browser.downloads.download({
     url: downloadUrl,
+    filename: fileName,
     conflictAction: 'uniquify'
   });
 
-  console.log('[FacMod] Download started:', { fileId: fileId, version: version, downloadId: downloadId });
+  console.log('[FacMod] Download started:', { fileId: fileId, version: version, fileName: fileName, downloadId: downloadId });
 
   return {
     success: true,
     downloadUrl: downloadUrl,
     fileId: fileId,
     version: version,
+    fileName: fileName,
     downloadId: downloadId
   };
 }
 
-async function getLatestVersion(modName) {
+async function getLatestRelease(modName) {
   var url = API_BASE + '/api/mods/' + encodeURIComponent(modName);
   var response = await fetch(url);
   if (!response.ok) {
@@ -118,7 +129,11 @@ async function getLatestVersion(modName) {
     return 0;
   });
 
-  return releases[releases.length - 1].version;
+  var latest = releases[releases.length - 1];
+  return {
+    version: latest.version,
+    fileName: latest.file_name
+  };
 }
 
 async function getStatus() {
