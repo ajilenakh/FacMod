@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate icons
+        run: python3 icons/generate.py
+
+      - name: Create Chrome ZIP
+        run: |
+          cp manifest.chrom.json manifest.json
+          zip -r facmod-chrome.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "manifest.firefox.json" \
+            -x "manifest.chrom.json" \
+            -x "AGENTS.md" \
+            -x "BUILD.md" \
+            -x "icons/logo.png" \
+            -x "icons/generate.py"
+
+      - name: Create Firefox ZIP
+        run: |
+          cp manifest.firefox.json manifest.json
+          zip -r facmod-firefox.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "manifest.firefox.json" \
+            -x "manifest.chrom.json" \
+            -x "AGENTS.md" \
+            -x "BUILD.md" \
+            -x "icons/logo.png" \
+            -x "icons/generate.py"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            facmod-chrome.zip
+            facmod-firefox.zip
+          generate_release_notes: true
