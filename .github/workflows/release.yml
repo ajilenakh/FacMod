@@ -44,6 +44,8 @@ jobs:
             -x "manifest.chrom.json" \
             -x "AGENTS.md" \
             -x "BUILD.md" \
+            -x "README.md" \
+            -x "LICENSE" \
             -x "icons/logo.png" \
             -x "icons/generate.py"
 
@@ -57,6 +59,8 @@ jobs:
             -x "manifest.chrom.json" \
             -x "AGENTS.md" \
             -x "BUILD.md" \
+            -x "README.md" \
+            -x "LICENSE" \
             -x "icons/logo.png" \
             -x "icons/generate.py"
 
