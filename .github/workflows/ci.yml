@@ -23,14 +23,18 @@ jobs:
       - name: Generate icons
         run: python3 icons/generate.py
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Verify Chrome manifest
         run: |
           cp manifest.chrom.json manifest.json
           python3 -c "import json; json.load(open('manifest.json'))"
           echo "Chrome manifest OK"
 
-      - name: Verify Firefox manifest
+      - name: Lint Firefox extension
         run: |
           cp manifest.firefox.json manifest.json
-          python3 -c "import json; json.load(open('manifest.json'))"
-          echo "Firefox manifest OK"
+          npm install -g web-ext
+          web-ext lint --self-hosted
