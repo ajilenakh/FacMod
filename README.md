@@ -7,6 +7,9 @@ One-click Factorio mod downloads from [mods.factorio.com](https://mods.factorio.
 Backend by [re146.dev](https://re146.dev/).
 
 ## Install
+Download [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/facmod-factorio-mod-downloader) here.
+
+## Build
 
 See [BUILD.md](BUILD.md) for per-browser setup.
 
